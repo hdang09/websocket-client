@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Bingo Game</h1>
+
+    <ul id="realtime-data"></ul>
+  </body>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script>
+    let stompClient;
+
+    function onConnected() {
+      console.log("success");
+      stompClient.subscribe("/topic/rooms", onMessageReceived);
+    }
+
+    function onError(error) {
+      console.log(error);
+      connect();
+    }
+
+    function onMessageReceived(payload) {
+      const realtimeData = document.getElementById("realtime-data");
+
+      const rooms = JSON.parse(payload.body);
+      realtimeData.innerHTML = rooms.map(
+        (room) => `<li>${item.roomName} | ${item.betMoney}VNĐ</li>`
+      );
+    }
+
+    function connect() {
+      let socket = new SockJS("http://localhost:8080/ws-bingo");
+      stompClient = Stomp.over(socket);
+      stompClient.debug = null;
+      stompClient.connect({}, onConnected, onError);
+    }
+    connect();
+  </script>
+</html>
