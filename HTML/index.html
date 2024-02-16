@@ -3,7 +3,8 @@
   <body>
     <h1>Bingo Game</h1>
 
-    <ul id="realtime-data"></ul>
+    Last message:
+    <div id="realtime-data"></div>
   </body>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
@@ -21,17 +22,16 @@
       connect();
     }
 
-    function onMessageReceived(payload) {
-      const realtimeData = document.getElementById("realtime-data");
+    function onMessageReceived(message) {
+      // JSON.parse(message.body) if needed
+      const data = message.body;
 
-      const rooms = JSON.parse(payload.body);
-      realtimeData.innerHTML = rooms.map(
-        (room) => `<li>${item.roomName} | ${item.betMoney}VNĐ</li>`
-      );
+      const element = document.getElementById("realtime-data");
+      element.textContent = data;
     }
 
     function connect() {
-      let socket = new SockJS("http://localhost:8080/ws-bingo");
+      let socket = new SockJS("http;//localhost:8080/ws-bingo");
       stompClient = Stomp.over(socket);
       stompClient.debug = null;
       stompClient.connect({}, onConnected, onError);
